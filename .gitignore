@@ -1,0 +1,48 @@
+### Java ###
+*.class
+*.log
+*.ctxt
+hs_err_pid*
+replay_pid*
+
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle-cache/
+out/
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Logs & temp ###
+logs/
+*.log
+tmp/
+*.tmp
+
+### Spring Boot ###
+/target/
+*.jar
+*.war
+
+### Docker ###
+/data/
+*.pid
+.env
+docker-compose.override.yml
+
+### Flyway ###
+/sql/migrations/test/
+flyway_schema_history
+
+### Others ###
+*.swp
+*.swo
