@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: storyTracks
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://localhost:543e/storytracks
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    #spring.flyway.enabled: false # auto-migration temporarily off
+    clean-disabled: false  # allow dropping tables for reset

@@ -1,7 +1,18 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.postgresql:postgresql:42.7.1")
+        classpath("org.flywaydb:flyway-database-postgresql:10.4.1")
+    }
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.flywaydb.flyway' version '10.7.1'
 }
 
 group = 'com.T4'
@@ -10,7 +21,7 @@ description = 'New project for storytracks (backend)'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -24,8 +35,19 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
+	
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+flyway {
+    url = 'jdbc:postgresql://localhost:5433/storytracks'
+    user = 'postgres'
+    password = 'postgres'
 }
 
 tasks.named('test') {
