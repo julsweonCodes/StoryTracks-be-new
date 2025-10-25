@@ -7,7 +7,7 @@ spring:
     activate:
       on-profile: docker
   datasource:
-    url: jdbc:postgresql://localhost:543e/storytracks
+    url: jdbc:postgresql://localhost:5432/storytracks
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
