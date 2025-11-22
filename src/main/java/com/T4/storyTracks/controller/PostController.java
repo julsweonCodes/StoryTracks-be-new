@@ -1,12 +1,9 @@
 package com.T4.storyTracks.controller;
 
 import com.T4.storyTracks.common.ApiResponse;
-import com.T4.storyTracks.dto.PostDetailResponse;
-import com.T4.storyTracks.dto.PostResponse;
-import com.T4.storyTracks.model.Post;
-import com.T4.storyTracks.repository.PostRepository;
+import com.T4.storyTracks.dto.response.PostDetailResponse;
+import com.T4.storyTracks.dto.response.PostResponse;
 import com.T4.storyTracks.service.PostService;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/posts") // Base URL Path for this controller
-@CrossOrigin(origins = "*") // Allows requests from all origins (for frontend integration).
+@RequestMapping("/api/v1/posts") // Base URL Path for this controller
+//@CrossOrigin(origins = "*") // Allows requests from all origins (for frontend integration).
 public class PostController {
 
   private final PostService postsService;
@@ -32,11 +29,11 @@ public class PostController {
   }
 
   /**
-   * GET endpoint to retrieve all posts. URL: GET /api/posts
+   * GET endpoint to retrieve all posts. URL: GET /api/v1/posts/feed
    *
    * @return List of all posts in JSON format.
    */
-  @GetMapping("/list")
+  @GetMapping("/feed")
   public ResponseEntity<Page<PostResponse>> getPosts(
   @RequestParam(defaultValue = "0") int page,
   @RequestParam(defaultValue = "20") int size) {
@@ -44,7 +41,7 @@ public class PostController {
   }
 
   /**
-   * GET /api/posts/{id}
+   * GET /api/v1/posts/{id}
    * Fetch a single post by ID.
    */
   @GetMapping("/{id}")

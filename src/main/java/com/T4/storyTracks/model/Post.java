@@ -9,9 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
@@ -43,18 +41,20 @@ public class Post {
   private String password;
 
   @Column(name = "rgst_dtm")
-  private LocalDateTime rgstDtm;
+  private OffsetDateTime rgstDtm;
 
   @Column(name = "chng_dtm")
-  private LocalDateTime chngDtm;
+  private OffsetDateTime chngDtm;
 
   // 🔗 전체 이미지 리스트
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @Builder.Default
   private List<PostImage> postImages = new ArrayList<>();
 
   // 🔗 썸네일 전용 (thumb_yn = 'Y'인 이미지만 가져옴)
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Where(clause = "thumb_yn = 'Y'")
+  @Builder.Default
   private List<PostImage> thumbImg = new ArrayList<>();
 
 

@@ -1,7 +1,6 @@
-package com.T4.storyTracks.dto;
+package com.T4.storyTracks.dto.response;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +13,11 @@ import lombok.NoArgsConstructor;
 public class PostResponse {
   private Long postId;
   private String title;
-//  private String ogText;
+  private String ogText;
   private String aiGenText;
 //  private String password;
-  private String rgstDtm;
-  private String chngDtm;
+  private OffsetDateTime rgstDtm;
+  private OffsetDateTime chngDtm;
 
   private ThumbHash thumbHash;
 

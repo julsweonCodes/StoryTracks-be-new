@@ -24,3 +24,6 @@ spring:
     baseline-on-migrate: false
     #spring.flyway.enabled: false # auto-migration temporarily off
     clean-disabled: false  # allow dropping tables for reset
+
+  cors:
+    allowed-origins: "http://localhost:3000"

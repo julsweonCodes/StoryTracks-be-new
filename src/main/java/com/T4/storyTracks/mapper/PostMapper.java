@@ -1,8 +1,8 @@
 package com.T4.storyTracks.mapper;
 
-import com.T4.storyTracks.dto.ImageResponse;
-import com.T4.storyTracks.dto.PostDetailResponse;
-import com.T4.storyTracks.dto.PostResponse;
+import com.T4.storyTracks.dto.response.ImageResponse;
+import com.T4.storyTracks.dto.response.PostDetailResponse;
+import com.T4.storyTracks.dto.response.PostResponse;
 import com.T4.storyTracks.model.Post;
 import com.T4.storyTracks.model.PostImage;
 import java.util.List;
@@ -13,15 +13,17 @@ public class PostMapper {
     PostImage thumb = post.getThumbImg().stream()
         .filter(img -> "Y".equals(img.getThumbYn()))
         .findFirst()
-        .orElse(null);
+        .orElse(post.getPostImages().get(0)); // fallback: use the first image as thumbnail
 
     return PostResponse.builder()
         .postId(post.getPostId())
         .title(post.getTitle())
         .aiGenText(post.getAiGenText())
 //        .password(post.getPassword())
-        .rgstDtm(post.getRgstDtm() != null ? post.getRgstDtm().toString() : null)
-        .chngDtm(post.getChngDtm() != null ? post.getChngDtm().toString() : null)
+//        .rgstDtm(post.getRgstDtm() != null ? post.getRgstDtm().toString() : null)
+//        .chngDtm(post.getChngDtm() != null ? post.getChngDtm().toString() : null)
+        .rgstDtm(post.getRgstDtm())
+        .chngDtm(post.getChngDtm())
         .thumbHash(thumb != null ? PostResponse.ThumbHash.builder()
             .thumbImgId(thumb.getImgId().toString())
             .thumbImgPath(thumb.getImgPath())
@@ -40,7 +42,7 @@ public class PostMapper {
             .geoLong(img.getGeoLong())
             .imgPath(img.getImgPath())
             .imgDtm(img.getImgDtm() != null ? img.getImgDtm().toString() : null)
-            .rgstDtm(img.getRgstDtm() != null ? img.getRgstDtm().toString() : null)
+            .rgstDtm(img.getRgstDtm() != null ? img.getRgstDtm().toString() : null) // to be changed
             .fileName(img.getImgPath() != null
                 ? img.getImgPath().substring(img.getImgPath().lastIndexOf('/') + 1)
                 : null)
@@ -51,9 +53,10 @@ public class PostMapper {
     return PostDetailResponse.builder()
         .postId(post.getPostId())
         .title(post.getTitle())
+        .ogText(post.getOgText())
         .aiGenText(post.getAiGenText())
-        .rgstDtm(post.getRgstDtm() != null ? post.getRgstDtm().toString() : null)
-        .chngDtm(post.getChngDtm() != null ? post.getChngDtm().toString() : null)
+        .rgstDtm(post.getRgstDtm())
+        .chngDtm(post.getChngDtm())
         .blogImgList(imgList)
         .build();
   }

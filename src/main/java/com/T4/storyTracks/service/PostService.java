@@ -2,22 +2,16 @@ package com.T4.storyTracks.service;
 
 import static com.T4.storyTracks.mapper.PostMapper.convertToDtoDetail;
 
-import com.T4.storyTracks.dto.ImageResponse;
-import com.T4.storyTracks.dto.PostDetailResponse;
-import com.T4.storyTracks.dto.PostResponse;
+import com.T4.storyTracks.dto.response.PostDetailResponse;
+import com.T4.storyTracks.dto.response.PostResponse;
 import com.T4.storyTracks.exception.ResourceNotFoundException;
 import com.T4.storyTracks.model.Post;
-import com.T4.storyTracks.model.PostImage;
 import com.T4.storyTracks.repository.PostRepository;
 import com.T4.storyTracks.mapper.PostMapper;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 /**

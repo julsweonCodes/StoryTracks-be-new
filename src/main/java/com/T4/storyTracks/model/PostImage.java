@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +31,8 @@ public class PostImage {
 
   private String geoLat;  // Latitude (more precise)
   private String geoLong; // Longitude
-  private LocalDateTime imgDtm;
-  private LocalDateTime rgstDtm;
+  private OffsetDateTime imgDtm;
+  private OffsetDateTime rgstDtm;
   @Column(name = "thumb_yn", length = 1)
   private String thumbYn; // 'Y' or 'N'
 

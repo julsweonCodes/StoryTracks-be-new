@@ -5,7 +5,7 @@ COPY . .
 RUN gradle clean bootJar --no-daemon
 
 # 2단계: Run
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
