@@ -15,9 +15,9 @@ public class ImageResponse {
   private String geoLat;
   private String geoLong;
   private String imgPath;
+  private String imgFileName;
   private String imgDtm;
   private String rgstDtm;
   private Boolean thumbYn;
-  private String fileName;
-
+  private String filePath;
 }

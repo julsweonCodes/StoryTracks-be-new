@@ -13,9 +13,9 @@ public class PostMapper {
     PostImage thumb = post.getThumbImg().stream()
         .filter(img -> "Y".equals(img.getThumbYn()))
         .findFirst()
-        .orElse(post.getPostImages().get(0)); // fallback: use the first image as thumbnail
+        .orElseGet(() -> post.getPostImages().isEmpty() ? null : post.getPostImages().get(0));
 
-    return PostResponse.builder()
+      return PostResponse.builder()
         .postId(post.getPostId())
         .title(post.getTitle())
         .aiGenText(post.getAiGenText())
@@ -41,9 +41,10 @@ public class PostMapper {
             .geoLat(img.getGeoLat())
             .geoLong(img.getGeoLong())
             .imgPath(img.getImgPath())
+            .imgFileName(img.getImgFileName())
             .imgDtm(img.getImgDtm() != null ? img.getImgDtm().toString() : null)
             .rgstDtm(img.getRgstDtm() != null ? img.getRgstDtm().toString() : null) // to be changed
-            .fileName(img.getImgPath() != null
+            .filePath(img.getImgPath() != null
                 ? img.getImgPath().substring(img.getImgPath().lastIndexOf('/') + 1)
                 : null)
             .build()

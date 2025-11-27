@@ -4,11 +4,22 @@ import com.T4.storyTracks.dto.request.UserLoginRequest;
 import com.T4.storyTracks.dto.request.UserPwdUpdateRequest;
 import com.T4.storyTracks.dto.request.UserRegisterRequest;
 import com.T4.storyTracks.dto.request.UserUpdateRequest;
+import com.T4.storyTracks.dto.response.MyBlogResponse;
+import com.T4.storyTracks.dto.response.PostResponse;
+import com.T4.storyTracks.dto.response.UserBlogHomeResponse;
 import com.T4.storyTracks.dto.response.UserResponse;
+import com.T4.storyTracks.mapper.PostMapper;
 import com.T4.storyTracks.model.User;
+import com.T4.storyTracks.repository.PostRepository;
 import com.T4.storyTracks.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +27,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final BCryptPasswordEncoder pwdEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     public UserResponse registerUser(UserRegisterRequest request) {
@@ -75,6 +88,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException());
 
+        user.setProfileImg(request.getProfileImg());
         user.setNickname(request.getNickname());
         user.setBio(request.getBio());
         user.setChngDtm(OffsetDateTime.now());
@@ -99,6 +113,39 @@ public class UserService {
         user.setChngDtm(OffsetDateTime.now());
         userRepository.save(user);
 
+    }
+
+    public UserBlogHomeResponse getUserBlogHome(Long id, int page, int size) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "rgstDtm"));
+        Page<PostResponse> posts = postRepository.findByUserId(id, pageable)
+                .map(PostMapper::convertToDto);
+
+        return UserBlogHomeResponse.builder()
+                .id(user.getId())
+                .nickname(user.getNickname())
+                .blogName(user.getBlogName())
+                .bio(user.getBio())
+                .profileImg(user.getProfileImg())
+                .lastLoginDtm(user.getLastLoginDtm() != null ? user.getLastLoginDtm().toString() : null)
+                .posts(posts.getContent())
+                .totalPages(posts.getTotalPages())
+                .currentPage(page)
+                .build();
+    }
+
+    public MyBlogResponse getMyBlogPosts(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "rgstDtm"));
+        Page<PostResponse> posts = postRepository.findByUserId(userId, pageable)
+                .map(PostMapper::convertToDto);
+
+        return MyBlogResponse.builder()
+                .totalPages(posts.getTotalPages())
+                .currentPage(page)
+                .posts(posts.getContent())
+                .build();
     }
 
     // mapper

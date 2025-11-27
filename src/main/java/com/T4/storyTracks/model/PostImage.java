@@ -9,8 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,24 +18,32 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "images")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PostImage {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long imgId; // Primary key (auto-increment)
 
-  @Column(nullable = false, length = 512)
-  private String imgPath; // Image path or URL
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long imgId; // Primary key (auto-increment)
 
-  private String geoLat;  // Latitude (more precise)
-  private String geoLong; // Longitude
-  private OffsetDateTime imgDtm;
-  private OffsetDateTime rgstDtm;
-  @Column(name = "thumb_yn", length = 1)
-  private String thumbYn; // 'Y' or 'N'
+    @Column(nullable = false, length = 512)
+    private String imgPath; // Image path or URL
 
-  // 🔗 Many images belong to one post
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Post post;
+    @Column(nullable = false, length = 512)
+    private String imgFileName; // Image path or URL
+
+    private String geoLat;  // Latitude (more precise)
+    private String geoLong; // Longitude
+    private OffsetDateTime imgDtm;
+    private OffsetDateTime rgstDtm;
+    @Column(name = "thumb_yn", length = 1)
+    private String thumbYn; // 'Y' or 'N'
+
+    // 🔗 Many images belong to one post
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 }

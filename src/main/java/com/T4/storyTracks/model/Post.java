@@ -29,6 +29,7 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.IDENTITY) //Specifies that the database auto-generates the ID value
   private Long postId;
   private String title;
+  private Long userId;
 
   // Explicitly maps this field to 'og_text' column; stores large text content.
   @Column(name = "og_text", columnDefinition = "TEXT")

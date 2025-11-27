@@ -22,6 +22,7 @@ public class ApiResponse<T> {
 
   // ✅ Static helper for success
   public static <T> ApiResponse<T> success(String message, T data) {
+
     return new ApiResponse<>(true, "200", message, data);
   }
 

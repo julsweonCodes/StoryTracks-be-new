@@ -1,8 +1,23 @@
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+s3:
+  base-url: https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/
 spring:
   profiles:
     active: local
   application:
     name: storyTracks
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 200MB
   config:
     activate:
       on-profile: docker
@@ -27,3 +42,15 @@ spring:
 
   cors:
     allowed-origins: "http://localhost:3000"
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
+
+cache:
+  type: redis
