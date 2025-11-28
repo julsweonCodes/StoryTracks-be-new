@@ -42,6 +42,7 @@ public class PostMapper {
             .geoLong(img.getGeoLong())
             .imgPath(img.getImgPath())
             .imgFileName(img.getImgFileName())
+            .thumbYn(img.getThumbYn().equals("Y"))
             .imgDtm(img.getImgDtm() != null ? img.getImgDtm().toString() : null)
             .rgstDtm(img.getRgstDtm() != null ? img.getRgstDtm().toString() : null) // to be changed
             .filePath(img.getImgPath() != null

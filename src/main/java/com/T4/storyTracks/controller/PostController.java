@@ -76,8 +76,14 @@ public class PostController {
     /**
      * PUT /api/v1/posts/{id} Update a single post by ID (only the owner)
      */
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ApiResponse<PostDetailResponse>> updatePostById()
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<PostDetailResponse>> updatePostById(
+            @PathVariable Long id,
+            @RequestBody PostCreateRequest req
+    ) {
+        PostDetailResponse updated  = postsService.updatePostById(id, req);
+        return ResponseEntity.ok(ApiResponse.success("Post updated successfully", updated));
+    }
 
 
 }

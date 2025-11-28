@@ -14,6 +14,7 @@ import com.T4.storyTracks.repository.PostRepository;
 import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -96,7 +97,7 @@ public class PostService {
                     .geoLat(img.getGeoLat())
                     .geoLong(img.getGeoLong())
                     .imgDtm(img.getImgDtm())
-                    .thumbYn(img.getThumbYn())
+                    .thumbYn(img.getThumbYn() == null ? "N" : img.getThumbYn())
                     .rgstDtm(OffsetDateTime.now())
                     .build();
 
@@ -106,4 +107,48 @@ public class PostService {
         return savedPost.getPostId();
     }
 
+
+    @Transactional
+    public PostDetailResponse updatePostById(Long postId, PostCreateRequest req) {
+
+        Post post = postsRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Posts with id: " + postId + " not found"));
+
+        if (!post.getUserId().equals(req.getUserId())) {
+            throw new IllegalArgumentException("Unathorized : You do not own this post.");
+        }
+
+        post.setUserId(req.getUserId());
+        post.setTitle(req.getTitle());
+        post.setOgText(req.getOgText());
+        post.setAiGenText(req.getAiGenText());
+        post.setChngDtm(OffsetDateTime.now());
+
+        imageRepository.deleteByPost_PostId(postId);
+
+        List<PostImage> newImages = req.getImages().stream()
+                .map(img -> PostImage.builder()
+                        .imgFileName(img.getImgFileName())
+                        .imgPath(img.getImgPath())
+                        .geoLat(img.getGeoLat())
+                        .geoLong(img.getGeoLong())
+                        .imgDtm(img.getImgDtm())
+                        .thumbYn(img.getThumbYn() == null ? "N" : img.getThumbYn())
+                        .build()
+                )
+                .toList();
+
+    // Remove existing images
+        post.getPostImages().clear();
+
+    // Add new images
+        newImages.forEach(img -> img.setPost(post));  // attach post
+        post.getPostImages().addAll(newImages);
+
+    // Save post
+        postsRepository.save(post);
+
+        return convertToDtoDetail(post);
+    }
 }

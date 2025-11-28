@@ -48,7 +48,7 @@ public class Post {
   private OffsetDateTime chngDtm;
 
   // 🔗 전체 이미지 리스트
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   @Builder.Default
   private List<PostImage> postImages = new ArrayList<>();
 

@@ -21,5 +21,5 @@ public interface ImageRepository extends JpaRepository<PostImage, Long> {
             GROUP BY ROUND(i.geo_lat::NUMERIC, 2), ROUND(i.geo_long::NUMERIC, 2)
             """, nativeQuery = true)
     List<Map<String, Object>> findUserImageClusters(@Param("userId") Long userId);
-
+    void deleteByPost_PostId(Long postId);
 }
