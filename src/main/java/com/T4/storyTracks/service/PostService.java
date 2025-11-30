@@ -9,12 +9,16 @@ import com.T4.storyTracks.exception.ResourceNotFoundException;
 import com.T4.storyTracks.mapper.PostMapper;
 import com.T4.storyTracks.model.Post;
 import com.T4.storyTracks.model.PostImage;
+import com.T4.storyTracks.model.User;
 import com.T4.storyTracks.repository.ImageRepository;
 import com.T4.storyTracks.repository.PostRepository;
+import com.T4.storyTracks.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,6 +37,7 @@ public class PostService {
 
     private final PostRepository postsRepository;
     private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
     /**
      * Constructor-based dependency injection (DI). Spring automatically injects the PostsRepository
      * bean into this service.
@@ -51,8 +56,16 @@ public class PostService {
         if (postPage.isEmpty()) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
-
-        return postPage.map(PostMapper::convertToDto);
+        List<Long> userIds = postPage.getContent().stream()
+                .map(Post::getUserId)
+                .distinct()
+                .toList();
+        Map<Long, User> userMap = userRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+        return postPage.map(post ->
+                PostMapper.convertToDto(post, userMap.get(post.getUserId()))
+        );
     }
 
     public PostDetailResponse getPostById(Long id) {
@@ -70,8 +83,16 @@ public class PostService {
         if (postPage.isEmpty()) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
-
-        return postPage.map(PostMapper::convertToDto);
+        List<Long> userIds = postPage.getContent().stream()
+                .map(Post::getUserId)
+                .distinct()
+                .toList();
+        Map<Long, User> userMap = userRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+        return postPage.map(post ->
+                PostMapper.convertToDto(post, userMap.get(post.getUserId()))
+        );
     }
 
     @Transactional
@@ -139,16 +160,24 @@ public class PostService {
                 )
                 .toList();
 
-    // Remove existing images
+        // Remove existing images
         post.getPostImages().clear();
 
-    // Add new images
+        // Add new images
         newImages.forEach(img -> img.setPost(post));  // attach post
         post.getPostImages().addAll(newImages);
 
-    // Save post
+        // Save post
         postsRepository.save(post);
 
         return convertToDtoDetail(post);
+    }
+
+    @Transactional
+    public void deletePostById(Long postId, Long userId) {
+        Post post = postsRepository.findByPostIdAndUserId(postId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Post not found or you do not have permission to delete this post."));
+        postsRepository.delete(post);
     }
 }

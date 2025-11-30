@@ -11,24 +11,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PostResponse {
-  private Long postId;
-  private String title;
-  private String ogText;
-  private String aiGenText;
-//  private String password;
-  private OffsetDateTime rgstDtm;
-  private OffsetDateTime chngDtm;
 
-  private ThumbHash thumbHash;
+    private Long postId;
+    private String title;
+    private String ogText;
+    private String aiGenText;
+    //  private String password;
+    private OffsetDateTime rgstDtm;
+    private OffsetDateTime chngDtm;
 
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class ThumbHash {
-    private String thumbImgId;
-    private String thumbImgPath;
-    private String thumbGeoLat;
-    private String thumbGeoLong;
-  }
+    private Long userId;       // user PK
+    private String nickname;
+    private String blogName;
+    private String profileImg;
+
+    private ThumbHash thumbHash;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ThumbHash {
+
+        private String thumbImgId;
+        private String thumbImgPath;
+        private String thumbGeoLat;
+        private String thumbGeoLong;
+    }
 }

@@ -14,7 +14,6 @@ import com.T4.storyTracks.repository.PostRepository;
 import com.T4.storyTracks.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -97,15 +96,15 @@ public class UserService {
         return toResponse(updated);
     }
 
-    public void updateUserPwd(Long id, UserPwdUpdateRequest request ) {
+    public void updateUserPwd(Long id, UserPwdUpdateRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (!pwdEncoder.matches(request.getOldPassword(),  user.getPwd())) {
+        if (!pwdEncoder.matches(request.getOldPassword(), user.getPwd())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
-        if (pwdEncoder.matches(request.getNewPassword(),  user.getPwd())) {
+        if (pwdEncoder.matches(request.getNewPassword(), user.getPwd())) {
             throw new IllegalArgumentException("Same password");
         }
 
@@ -121,7 +120,7 @@ public class UserService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "rgstDtm"));
         Page<PostResponse> posts = postRepository.findByUserId(id, pageable)
-                .map(PostMapper::convertToDto);
+                .map(post -> PostMapper.convertToDto(post, user));
 
         return UserBlogHomeResponse.builder()
                 .id(user.getId())
@@ -129,7 +128,8 @@ public class UserService {
                 .blogName(user.getBlogName())
                 .bio(user.getBio())
                 .profileImg(user.getProfileImg())
-                .lastLoginDtm(user.getLastLoginDtm() != null ? user.getLastLoginDtm().toString() : null)
+                .lastLoginDtm(
+                        user.getLastLoginDtm() != null ? user.getLastLoginDtm().toString() : null)
                 .posts(posts.getContent())
                 .totalPages(posts.getTotalPages())
                 .currentPage(page)
@@ -137,9 +137,13 @@ public class UserService {
     }
 
     public MyBlogResponse getMyBlogPosts(Long userId, int page, int size) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User not found with id: " + userId));
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "rgstDtm"));
         Page<PostResponse> posts = postRepository.findByUserId(userId, pageable)
-                .map(PostMapper::convertToDto);
+                .map(post -> PostMapper.convertToDto(post, user));
 
         return MyBlogResponse.builder()
                 .totalPages(posts.getTotalPages())

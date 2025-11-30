@@ -1,5 +1,8 @@
 package com.T4.storyTracks.service;
 
+import com.T4.storyTracks.common.ApiResponse;
+import com.T4.storyTracks.dto.request.AIGenerateRequest;
+import com.T4.storyTracks.dto.response.AiGenerateResponse;
 import com.T4.storyTracks.dto.response.ImageClusterResponse;
 import com.T4.storyTracks.model.ImageCluster;
 import com.T4.storyTracks.repository.ImageClusterRepository;
@@ -14,9 +17,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @Service
@@ -142,4 +148,6 @@ public class GoogleAPIService {
     public void clearUserCache(Long userId) {
         // Evict cache when user uploads new image
     }
+
+
 }

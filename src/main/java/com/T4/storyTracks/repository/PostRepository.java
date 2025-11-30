@@ -24,6 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByUserIdOrderByRgstDtmDesc(Long userId);
 
+    Optional<Post> findByPostIdAndUserId(Long postId, Long userId);
 
     @Query(value = """
             SELECT DISTINCT p.*
@@ -51,6 +52,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("precision") int precision,
             Pageable pageable
     );
-
 
 }

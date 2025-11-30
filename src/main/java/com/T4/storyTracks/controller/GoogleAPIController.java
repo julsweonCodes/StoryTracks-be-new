@@ -1,12 +1,14 @@
 package com.T4.storyTracks.controller;
 
 import com.T4.storyTracks.common.ApiResponse;
+import com.T4.storyTracks.dto.request.AIGenerateRequest;
+import com.T4.storyTracks.dto.response.AiGenerateResponse;
 import com.T4.storyTracks.dto.response.ImageClusterResponse;
+import com.T4.storyTracks.service.GeminiService;
 import com.T4.storyTracks.service.GoogleAPIService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import java.util.List;
 public class GoogleAPIController {
 
     private final GoogleAPIService googleAPIService;
+
 
     @GetMapping("/clusters")
     public ResponseEntity<ApiResponse<List<ImageClusterResponse>>> getImageClusters() {

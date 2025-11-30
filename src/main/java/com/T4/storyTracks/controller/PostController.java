@@ -2,12 +2,14 @@ package com.T4.storyTracks.controller;
 
 import com.T4.storyTracks.common.ApiResponse;
 import com.T4.storyTracks.dto.request.PostCreateRequest;
+import com.T4.storyTracks.dto.request.UserIdRequest;
 import com.T4.storyTracks.dto.response.PostDetailResponse;
 import com.T4.storyTracks.dto.response.PostResponse;
 import com.T4.storyTracks.service.PostService;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,5 +87,18 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.success("Post updated successfully", updated));
     }
 
+    /**
+     * DELETE /api/v1/posts/{postId}?userId={userId}
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deletePostById(
+            @PathVariable Long id,
+            @RequestBody UserIdRequest req
+    ) {
+        postsService.deletePostById(id, req.getUserId());
+        return ResponseEntity.ok(
+                ApiResponse.success("Post deleted successfully", null)
+        );
+    }
 
 }

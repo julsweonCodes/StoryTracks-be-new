@@ -9,18 +9,19 @@ cloud:
       secret-key: ${AWS_SECRET_ACCESS_KEY}
 s3:
   base-url: https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/
+
+google:
+  api-key: ${GEMINI_API_KEY}
+  model-name: gemini-2.0-flash
+
+
 spring:
-  profiles:
-    active: local
   application:
     name: storyTracks
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 200MB
-  config:
-    activate:
-      on-profile: docker
   datasource:
     url: jdbc:postgresql://localhost:5432/storytracks
     username: postgres

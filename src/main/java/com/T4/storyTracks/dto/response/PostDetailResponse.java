@@ -9,14 +9,17 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostDetailResponse {
-  private Long postId;
-  private String title;
-  private String ogText;
-  private String aiGenText;
-//  private String password;
-  private OffsetDateTime rgstDtm;
-  private OffsetDateTime chngDtm;
-  private List<ImageResponse> blogImgList; // 상세 조회 시 전체 이미지 리스트
+
+    private Long userId;
+    private Long postId;
+    private String title;
+    private String ogText;
+    private String aiGenText;
+    //  private String password;
+    private OffsetDateTime rgstDtm;
+    private OffsetDateTime chngDtm;
+    private List<ImageResponse> blogImgList; // 상세 조회 시 전체 이미지 리스트
 }
