@@ -15,6 +15,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Utilities;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
@@ -64,6 +65,15 @@ public class S3Service {
                 .build();
 
         s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
+    }
+
+    public void deleteFromS3(String key) {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(bucketNm)
+                .key(key)
+                .build();
+
+        s3Client.deleteObject(deleteRequest);
     }
 
 }

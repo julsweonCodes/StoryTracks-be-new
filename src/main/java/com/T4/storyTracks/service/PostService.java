@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+
 /**
  * Service layer that contains business logic for handling 'posts' data. Acts as a bridge between
  * the controller and repository.
@@ -38,6 +39,7 @@ public class PostService {
     private final PostRepository postsRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
     /**
      * Constructor-based dependency injection (DI). Spring automatically injects the PostsRepository
      * bean into this service.
@@ -178,6 +180,12 @@ public class PostService {
         Post post = postsRepository.findByPostIdAndUserId(postId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Post not found or you do not have permission to delete this post."));
+
+        for (PostImage img : post.getPostImages()) {
+            String imgPath = img.getImgPath();
+            s3Service.deleteFromS3("posts/"+imgPath);
+        }
+
         postsRepository.delete(post);
     }
 }
