@@ -31,3 +31,4 @@ public class PostCreateRequest {
         private String thumbYn; // Y or N
     }
 }
+

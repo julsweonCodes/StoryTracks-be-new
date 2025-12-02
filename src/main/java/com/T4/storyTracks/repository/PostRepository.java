@@ -27,24 +27,24 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByPostIdAndUserId(Long postId, Long userId);
 
     @Query(value = """
-            SELECT DISTINCT p.*
-            FROM posts p
-            JOIN images i ON p.post_id = i.post_id
-            WHERE i.thumb_yn = 'Y'
-              AND ROUND(i.geo_lat::NUMERIC, :precision) = ROUND(CAST(:lat AS NUMERIC), :precision)
-              AND ROUND(i.geo_long::NUMERIC, :precision) = ROUND(CAST(:lng AS NUMERIC), :precision)
-            ORDER BY p.rgst_dtm DESC
-            """,
+        SELECT DISTINCT p.post_id, p.user_id, p.title, p.og_text, p.ai_gen_text,
+               p.password, p.rgst_dtm, p.chng_dtm
+        FROM posts p
+        JOIN images i ON p.post_id = i.post_id
+        WHERE i.thumb_yn = 'Y'
+          AND ROUND(i.geo_lat::NUMERIC, :precision) = ROUND(CAST(:lat AS NUMERIC), :precision)
+          AND ROUND(i.geo_long::NUMERIC, :precision) = ROUND(CAST(:lng AS NUMERIC), :precision)
+        ORDER BY p.rgst_dtm DESC
+        """,
 
             countQuery = """
-                    SELECT COUNT(DISTINCT p.post_id)
-                    FROM posts p
-                    JOIN images i ON p.post_id = i.post_id
-                    WHERE i.thumb_yn = 'Y'
-                      AND ROUND(i.geo_lat::NUMERIC, :precision) = ROUND(CAST(:lat AS NUMERIC), :precision)
-                      AND ROUND(i.geo_long::NUMERIC, :precision) = ROUND(CAST(:lng AS NUMERIC), :precision)
-                    """,
-
+        SELECT COUNT(DISTINCT p.post_id)
+        FROM posts p
+        JOIN images i ON p.post_id = i.post_id
+        WHERE i.thumb_yn = 'Y'
+          AND ROUND(i.geo_lat::NUMERIC, :precision) = ROUND(CAST(:lat AS NUMERIC), :precision)
+          AND ROUND(i.geo_long::NUMERIC, :precision) = ROUND(CAST(:lng AS NUMERIC), :precision)
+        """,
             nativeQuery = true)
     Page<Post> findPostsByCluster(
             @Param("lat") double lat,

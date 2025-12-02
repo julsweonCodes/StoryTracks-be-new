@@ -18,6 +18,7 @@ public class PostDetailResponse {
     private String title;
     private String ogText;
     private String aiGenText;
+    private Boolean isLiked;
     //  private String password;
     private OffsetDateTime rgstDtm;
     private OffsetDateTime chngDtm;
