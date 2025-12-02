@@ -7,10 +7,13 @@ import com.T4.storyTracks.dto.response.PostDetailResponse;
 import com.T4.storyTracks.dto.response.PostResponse;
 import com.T4.storyTracks.exception.ResourceNotFoundException;
 import com.T4.storyTracks.mapper.PostMapper;
+import com.T4.storyTracks.model.Like;
 import com.T4.storyTracks.model.Post;
 import com.T4.storyTracks.model.PostImage;
 import com.T4.storyTracks.model.User;
 import com.T4.storyTracks.repository.ImageRepository;
+import com.T4.storyTracks.repository.LikeRepository;
+import com.T4.storyTracks.repository.LikeRepository;
 import com.T4.storyTracks.repository.PostRepository;
 import com.T4.storyTracks.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -38,6 +41,7 @@ public class PostService {
     private final PostRepository postsRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     /**
      * Constructor-based dependency injection (DI). Spring automatically injects the PostsRepository
      * bean into this service.
@@ -96,10 +100,10 @@ public class PostService {
     }
 
     @Transactional
-    public Long createPost(PostCreateRequest req) {
+    public Long createPost(Long userId, PostCreateRequest req) {
         // 1. Save post
         Post post = Post.builder()
-                .userId(req.getUserId())
+                .userId(userId)
                 .title(req.getTitle())
                 .ogText(req.getOgText())
                 .aiGenText(req.getAiGenText())
@@ -130,17 +134,17 @@ public class PostService {
 
 
     @Transactional
-    public PostDetailResponse updatePostById(Long postId, PostCreateRequest req) {
+    public PostDetailResponse updatePostById(Long userId, Long postId, PostCreateRequest req) {
 
         Post post = postsRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Posts with id: " + postId + " not found"));
 
-        if (!post.getUserId().equals(req.getUserId())) {
+        if (!post.getUserId().equals(userId)) {
             throw new IllegalArgumentException("Unathorized : You do not own this post.");
         }
 
-        post.setUserId(req.getUserId());
+        post.setUserId(userId);
         post.setTitle(req.getTitle());
         post.setOgText(req.getOgText());
         post.setAiGenText(req.getAiGenText());

@@ -14,6 +14,7 @@ import com.T4.storyTracks.repository.PostRepository;
 import com.T4.storyTracks.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -62,6 +64,17 @@ public class UserService {
         return toResponse(saved);
     }
 
+    public User validateUser(UserLoginRequest request) {
+        User user = userRepository.findByUserId(request.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!pwdEncoder.matches(request.getPwd(), user.getPwd())) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+
+        user.setLastLoginDtm(OffsetDateTime.now());
+        return userRepository.save(user);
+    }
     public UserResponse loginUser(UserLoginRequest request) {
         User user = userRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -85,10 +98,11 @@ public class UserService {
 
     public UserResponse updateUserProfile(Long id, UserUpdateRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException("User profile not found"));
 
         user.setProfileImg(request.getProfileImg());
         user.setNickname(request.getNickname());
+        user.setBlogName(request.getBlogName());
         user.setBio(request.getBio());
         user.setChngDtm(OffsetDateTime.now());
 

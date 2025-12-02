@@ -5,8 +5,10 @@ import com.T4.storyTracks.dto.request.PostCreateRequest;
 import com.T4.storyTracks.dto.request.UserIdRequest;
 import com.T4.storyTracks.dto.response.PostDetailResponse;
 import com.T4.storyTracks.dto.response.PostResponse;
+import com.T4.storyTracks.service.JWTService;
 import com.T4.storyTracks.service.PostService;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,24 +17,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/posts") // Base URL Path for this controller
+@RequiredArgsConstructor
 //@CrossOrigin(origins = "*") // Allows requests from all origins (for frontend integration).
 public class PostController {
 
     private final PostService postsService;
-
-    /**
-     * Constructor-based dependency injection (DI). Spring injects an instance of PostsService
-     * automatically.
-     */
-    public PostController(PostService postsService) {
-        this.postsService = postsService;
-    }
+    private final JWTService jwtService;
 
     /**
      * GET endpoint to retrieve all posts. URL: GET /api/v1/posts/feed
@@ -58,9 +55,10 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Map<String, Long>>> createPost(
-            @RequestBody PostCreateRequest req) {
-        System.out.println("👉 Received userId: " + req.getUserId());
-        Long postId = postsService.createPost(req);
+            @RequestBody PostCreateRequest req,
+            @RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtService.extractUserId(authHeader);
+        Long postId = postsService.createPost(userId, req);
 
         return ResponseEntity.ok(
                 ApiResponse.success("Post created successfully", Map.of("postId", postId)));
@@ -78,24 +76,27 @@ public class PostController {
     /**
      * PUT /api/v1/posts/{id} Update a single post by ID (only the owner)
      */
-    @PutMapping("/{id}")
+    @PutMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostDetailResponse>> updatePostById(
-            @PathVariable Long id,
-            @RequestBody PostCreateRequest req
+            @PathVariable Long postId,
+            @RequestBody PostCreateRequest req,
+            @RequestHeader("Authorization") String authHeader
     ) {
-        PostDetailResponse updated  = postsService.updatePostById(id, req);
+        Long userId = jwtService.extractUserId(authHeader);
+        PostDetailResponse updated  = postsService.updatePostById(userId, postId, req);
         return ResponseEntity.ok(ApiResponse.success("Post updated successfully", updated));
     }
 
     /**
      * DELETE /api/v1/posts/{postId}?userId={userId}
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePostById(
-            @PathVariable Long id,
-            @RequestBody UserIdRequest req
+            @PathVariable Long postId,
+            @RequestBody UserIdRequest req,
+            @RequestHeader("Authorization") String authHeader
     ) {
-        postsService.deletePostById(id, req.getUserId());
+        postsService.deletePostById(postId, jwtService.extractUserId(authHeader));
         return ResponseEntity.ok(
                 ApiResponse.success("Post deleted successfully", null)
         );

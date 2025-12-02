@@ -15,7 +15,7 @@ import lombok.Setter;
 @Builder
 public class PostCreateRequest {
 
-    private Long userId;  // frontend must include it
+//    private Long userId;  // frontend must include it -> to JWT
     private String title;
     private String ogText;
     private String aiGenText;

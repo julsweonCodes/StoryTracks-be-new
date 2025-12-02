@@ -26,6 +26,7 @@ public class PostResponse {
     private String profileImg;
 
     private ThumbHash thumbHash;
+    private Boolean isLiked;
 
     @Data
     @Builder

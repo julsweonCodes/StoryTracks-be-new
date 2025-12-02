@@ -27,6 +27,13 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("400", ex.getMessage()));
     }
 
+    @ExceptionHandler(JWTAuthenticationException.class)
+    public ResponseEntity<ApiResponse<?>> handleJwtAuthError(JWTAuthenticationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error("401", ex.getMessage()));
+    }
+
     // 🔹 Catch-all for unhandled exceptions (shows message for debug)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleGeneric(Exception ex) {
