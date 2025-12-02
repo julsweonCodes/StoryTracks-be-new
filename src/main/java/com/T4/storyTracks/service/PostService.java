@@ -38,7 +38,7 @@ public class PostService {
     // ==========================================================
     public Page<PostResponse> getAllPosts(int page, Long viewerId) {
 
-        Pageable pageable = PageRequest.of(page, 20, Sort.by("rgst_dtm").descending());
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("rgstDtm").descending());
         Page<Post> postPage = postsRepository.findAll(pageable);
 
         if (postPage.isEmpty()) {
@@ -57,7 +57,10 @@ public class PostService {
         return postPage.map(post -> {
             PostResponse dto = PostMapper.convertToDto(post, userMap.get(post.getUserId()));
 
-            boolean liked = likeRepository.existsByPostIdAndUserId(post.getPostId(), viewerId);
+            boolean liked = false;
+            if (viewerId != null) {
+                liked = likeRepository.existsByPostIdAndUserId(post.getPostId(), viewerId);
+            }
             dto.setIsLiked(liked);
 
             return dto;
@@ -89,7 +92,10 @@ public class PostService {
         return postPage.map(post -> {
             PostResponse dto = PostMapper.convertToDto(post, userMap.get(post.getUserId()));
 
-            boolean liked = likeRepository.existsByPostIdAndUserId(post.getPostId(), viewerId);
+            boolean liked = false;
+            if (viewerId != null) {
+                liked = likeRepository.existsByPostIdAndUserId(post.getPostId(), viewerId);
+            }
             dto.setIsLiked(liked);
 
             return dto;
@@ -106,7 +112,10 @@ public class PostService {
 
         PostDetailResponse res = convertToDtoDetail(post);
 
-        boolean liked = likeRepository.existsByPostIdAndUserId(postId, viewerId);
+        boolean liked = false;
+        if (viewerId != null) {
+            liked = likeRepository.existsByPostIdAndUserId(postId, viewerId);
+        }
         res.setIsLiked(liked);
 
         return res;
@@ -187,7 +196,11 @@ public class PostService {
         postsRepository.save(post);
 
         PostDetailResponse res = convertToDtoDetail(post);
-        res.setIsLiked(likeRepository.existsByPostIdAndUserId(postId, userId));
+        boolean liked = false;
+        if (userId != null) {
+            liked = likeRepository.existsByPostIdAndUserId(postId, userId);;
+        }
+        res.setIsLiked(liked);
 
         return res;
     }

@@ -66,17 +66,17 @@ public class UserController {
 
     @GetMapping("/{id}/profile")
     public ResponseEntity<ApiResponse<UserResponse>> getUserProfile(
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
-        UserResponse user = userService.getUserProfile(jwtService.extractUserId(authHeader));
+        UserResponse user = userService.getUserProfile(jwtService.requireUserId(authHeader));
         return ResponseEntity.ok(ApiResponse.success("Fetched user profile successfully", user));
     }
 
     @PutMapping("/{id}/profile")
     public ResponseEntity<ApiResponse<UserResponse>> updateUserProfile(
             @RequestBody UserUpdateRequest request,
-            @RequestHeader("Authorization") String authHeader) {
-        UserResponse user = userService.updateUserProfile(jwtService.extractUserId(authHeader), request);
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        UserResponse user = userService.updateUserProfile(jwtService.requireUserId(authHeader), request);
         return ResponseEntity.ok(ApiResponse.success("Updated user profile successfully", user));
     }
 

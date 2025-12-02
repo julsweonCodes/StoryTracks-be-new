@@ -20,35 +20,42 @@ public class JWTService {
         return Jwts.builder()
                 .claim("userId", user.getId())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
+                .setExpiration(
+                        new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
 
 
-    public Long extractUserId(String authHeader) {
+    public Long extractUserIdOrNull(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new JWTAuthenticationException("Missing or invalid Authorization header");
+            return null;  // anonymous user
         }
 
-        String token = authHeader.substring(7);
-
         try {
+            String token = authHeader.substring(7);
+
             Claims claims = Jwts.parser()
                     .setSigningKey(secretKey.getBytes())
                     .parseClaimsJws(token)
                     .getBody();
 
             Object idObj = claims.get("userId");
-            if (idObj == null) {
-                throw new JWTAuthenticationException("Token does not contain userId");
-            }
 
-            return Long.valueOf(idObj.toString());
+            return (idObj != null) ? Long.valueOf(idObj.toString()) : null;
 
         } catch (Exception e) {
-            throw new JWTAuthenticationException("Invalid or expired token: " + e.getMessage());
+            return null; // treat invalid token as anonymous
         }
     }
+
+    public Long requireUserId(String authHeader) {
+        Long userId = extractUserIdOrNull(authHeader);
+        if (userId == null) {
+            throw new JWTAuthenticationException("Authentication required.");
+        }
+        return userId;
+    }
+
 
 }

@@ -22,12 +22,12 @@ public class PostController {
     // ==========================================================
     // 1. GET ALL POSTS (Feed)
     // ==========================================================
-    @GetMapping
+    @GetMapping("/feed")
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getAllPosts(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestParam(defaultValue = "0") int page
     ) {
-        Long viewerId = jwtService.extractUserId(authHeader);
+        Long viewerId = jwtService.extractUserIdOrNull(authHeader);
         Page<PostResponse> posts = postService.getAllPosts(page, viewerId);
 
         return ResponseEntity.ok(ApiResponse.success("Fetched posts", posts));
@@ -38,13 +38,13 @@ public class PostController {
     // ==========================================================
     @GetMapping("/marker")
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getPostsByMarker(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam int level,
             @RequestParam(defaultValue = "0") int page
     ) {
-        Long viewerId = jwtService.extractUserId(authHeader);
+        Long viewerId = jwtService.extractUserIdOrNull(authHeader);
 
         Page<PostResponse> posts = postService.getPostsByMarker(lat, lng, level, page, viewerId);
 
@@ -56,10 +56,10 @@ public class PostController {
     // ==========================================================
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostDetailResponse>> getPostDetail(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable Long postId
     ) {
-        Long viewerId = jwtService.extractUserId(authHeader);
+        Long viewerId = jwtService.extractUserIdOrNull(authHeader);
 
         PostDetailResponse detail = postService.getPostById(postId, viewerId);
 
@@ -69,15 +69,14 @@ public class PostController {
     // ==========================================================
     // 4. CREATE POST
     // ==========================================================
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<Long>> createPost(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestBody PostCreateRequest req
     ) {
-        Long userId = jwtService.extractUserId(authHeader);
+        Long userId = jwtService.requireUserId(authHeader);
 
         Long postId = postService.createPost(userId, req);
-
         return ResponseEntity.ok(ApiResponse.success("Post created", postId));
     }
 
@@ -86,11 +85,11 @@ public class PostController {
     // ==========================================================
     @PutMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostDetailResponse>> updatePost(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable Long postId,
             @RequestBody PostCreateRequest req
     ) {
-        Long userId = jwtService.extractUserId(authHeader);
+        Long userId = jwtService.requireUserId(authHeader);
 
         PostDetailResponse updated = postService.updatePostById(userId, postId, req);
 
@@ -102,10 +101,10 @@ public class PostController {
     // ==========================================================
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable Long postId
     ) {
-        Long userId = jwtService.extractUserId(authHeader);
+        Long userId = jwtService.requireUserId(authHeader);
         postService.deletePostById(postId, userId);
 
         return ResponseEntity.ok(ApiResponse.success("Post deleted", null));

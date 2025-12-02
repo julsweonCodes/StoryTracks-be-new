@@ -25,8 +25,8 @@ public class LikeController {
     @PostMapping("/{postId}/like")
     public ResponseEntity<ApiResponse<Void>> likePost(
             @PathVariable Long postId,
-            @RequestHeader("Authorization") String authHeader) {
-        Long userId = jwtService.extractUserId(authHeader);
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        Long userId = jwtService.requireUserId(authHeader);
         likeService.likePost(postId, userId);
         return ResponseEntity.ok(ApiResponse.success("Post liked", null));
     }
@@ -34,9 +34,9 @@ public class LikeController {
     @DeleteMapping("/{postId}/like")
     public ResponseEntity<ApiResponse<Void>> unlikePost(
             @PathVariable Long postId,
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
-        Long userId = jwtService.extractUserId(authHeader);
+        Long userId = jwtService.requireUserId(authHeader);
         likeService.unlikePost(postId, userId);
 
         return ResponseEntity.ok(ApiResponse.success("Post unliked", null));

@@ -28,9 +28,9 @@ public class S3Controller {
     @PostMapping("/upload/profile")
     public ResponseEntity<ApiResponse<String>> uploadProfile(
             @RequestParam("file") MultipartFile file,
-            @RequestHeader("Authorization") String authHeader) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
-            Long userId = jwtService.extractUserId(authHeader);
+            Long userId = jwtService.requireUserId(authHeader);
             String url = s3Service.uploadProfileImg(file);
             return ResponseEntity.ok(ApiResponse.success("Success", url));
         } catch (Exception e) {
@@ -45,9 +45,9 @@ public class S3Controller {
     @PostMapping("/upload/blog-images")
     public ResponseEntity<ApiResponse<List<String>>> uploadPostImages(
             @RequestParam("files") List<MultipartFile> files,
-            @RequestHeader("Authorization") String authHeader) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
-            Long userId = jwtService.extractUserId(authHeader);
+            Long userId = jwtService.requireUserId(authHeader);
             List<String> urls = s3Service.uploadPostFiles(files);
             return ResponseEntity.ok(ApiResponse.success("Success", urls));
         } catch (Exception e) {
