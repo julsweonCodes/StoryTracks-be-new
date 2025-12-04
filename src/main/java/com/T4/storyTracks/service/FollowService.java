@@ -1,9 +1,12 @@
 package com.T4.storyTracks.service;
 
+import com.T4.storyTracks.dto.response.UserResponse;
+import com.T4.storyTracks.mapper.UserMapper;
 import com.T4.storyTracks.model.Follower;
 import com.T4.storyTracks.model.FollowerId;
 import com.T4.storyTracks.repository.FollowerRepository;
 import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,4 +46,25 @@ public class FollowService {
         }
     }
 
+    public int countFollowers(Long userId) {
+        return followerRepository.countFollowers(userId);
+    }
+
+    public int countFollowing(Long userId) {
+        return followerRepository.countFollowing(userId);
+    }
+
+    public List<UserResponse> getFollowers(Long userId) {
+        return followerRepository.getFollowers(userId)
+                .stream()
+                .map(UserMapper::toUserResponse)
+                .toList();
+    }
+
+    public List<UserResponse> getFollowing(Long userId) {
+        return followerRepository.getFollowing(userId)
+                .stream()
+                .map(UserMapper::toUserResponse)
+                .toList();
+    }
 }

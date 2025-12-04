@@ -7,9 +7,11 @@ import com.T4.storyTracks.dto.response.PostDetailResponse;
 import com.T4.storyTracks.dto.response.PostResponse;
 import com.T4.storyTracks.exception.ResourceNotFoundException;
 import com.T4.storyTracks.mapper.PostMapper;
+import com.T4.storyTracks.model.FollowerId;
 import com.T4.storyTracks.model.Post;
 import com.T4.storyTracks.model.PostImage;
 import com.T4.storyTracks.model.User;
+import com.T4.storyTracks.repository.FollowerRepository;
 import com.T4.storyTracks.repository.ImageRepository;
 import com.T4.storyTracks.repository.LikeRepository;
 import com.T4.storyTracks.repository.PostRepository;
@@ -32,6 +34,7 @@ public class PostService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final FollowerRepository followerRepository;
 
     // ==========================================================
     // 1. GET ALL POSTS (FEED) – with isLiked
@@ -63,6 +66,11 @@ public class PostService {
             }
             dto.setIsLiked(liked);
 
+            boolean following = false;
+            if (viewerId != null) {
+                following = followerRepository.existsById(new FollowerId(post.getUserId(), viewerId));
+            }
+            dto.setIsFollowed(following);
             return dto;
         });
     }
@@ -98,6 +106,12 @@ public class PostService {
             }
             dto.setIsLiked(liked);
 
+            boolean following = false;
+            if (viewerId != null) {
+                following = followerRepository.existsById(new FollowerId(post.getUserId(), viewerId));
+            }
+            dto.setIsFollowed(following);
+
             return dto;
         });
     }
@@ -117,6 +131,12 @@ public class PostService {
             liked = likeRepository.existsByPostIdAndUserId(postId, viewerId);
         }
         res.setIsLiked(liked);
+
+        boolean following = false;
+        if (viewerId != null) {
+            following = followerRepository.existsById(new FollowerId(post.getUserId(), viewerId));
+        }
+        res.setIsFollowed(following);
 
         return res;
     }

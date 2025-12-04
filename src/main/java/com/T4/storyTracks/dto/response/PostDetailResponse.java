@@ -19,6 +19,7 @@ public class PostDetailResponse {
     private String ogText;
     private String aiGenText;
     private Boolean isLiked;
+    private Boolean isFollowed;
     //  private String password;
     private OffsetDateTime rgstDtm;
     private OffsetDateTime chngDtm;

@@ -27,6 +27,7 @@ public class PostResponse {
 
     private ThumbHash thumbHash;
     private Boolean isLiked;
+    private Boolean isFollowed;
 
     @Data
     @Builder
