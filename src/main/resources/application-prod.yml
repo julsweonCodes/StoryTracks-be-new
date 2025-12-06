@@ -50,7 +50,7 @@ spring:
 
   cors:
     # Vercel frontend domain
-    allowed-origins: "https://story-tracks.vercel.app"
+    allowed-origins: "*"
 
   data:
     redis:
