@@ -15,9 +15,12 @@ jobs:
 
       - name: Show repo structure
         run: |
-          echo "=== REPO STRUCTURE ==="
+          echo "=== PRINT WORKSPACE PATH ==="
           pwd
-          ls -R .
+          echo "=== LIST FILES ==="
+          ls -al .
+          echo "=== RECURSIVE LIST ==="
+          find . -maxdepth 4 -type f | sort
 
       - name: Copy backend code to EC2
         uses: appleboy/scp-action@v0.1.7
