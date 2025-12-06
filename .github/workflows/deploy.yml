@@ -1,0 +1,65 @@
+name: Deploy Backend to EC2
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # DEBUG: Show repo files
+      - name: Debug - List Repo Files
+        run: ls -R .
+
+      # Copy backend source code to EC2
+      - name: Copy backend code to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT }}
+          source: "app/storytrack-backend/**"
+          target: "/home/ec2-user/app/storytrack-backend"
+          strip_components: 2
+
+      # SSH to EC2 & deploy with docker-compose (dash version)
+      - name: SSH into EC2 and deploy
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT }}
+          script: |
+            echo "===== DEBUG: LISTING /deploy DIRECTORY ====="
+            ls -al /home/ec2-user/deploy
+
+            echo "===== DEBUG: CHECK docker-compose VERSION ====="
+            docker-compose version || echo "docker-compose NOT FOUND"
+
+            echo "===== DEBUG: CHECKING .env.prod ====="
+            cat /home/ec2-user/deploy/.env.prod || echo ".env.prod MISSING!!"
+
+            echo "===== STOPPING PREVIOUS CONTAINERS ====="
+            docker-compose -f /home/ec2-user/deploy/docker-compose.prod.yml down || true
+
+            echo "===== BUILDING NEW DOCKER IMAGES ====="
+            docker-compose \
+              --env-file /home/ec2-user/deploy/.env.prod \
+              -f /home/ec2-user/deploy/docker-compose.prod.yml \
+              build --no-cache
+
+            echo "===== STARTING SERVICES ====="
+            docker-compose \
+              --env-file /home/ec2-user/deploy/.env.prod \
+              -f /home/ec2-user/deploy/docker-compose.prod.yml \
+              up -d
+
+            echo "===== DEPLOY DONE ====="
