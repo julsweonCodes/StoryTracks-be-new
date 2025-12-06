@@ -1,0 +1,65 @@
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+
+s3:
+  base-url: https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/
+
+google:
+  api-key: ${GEMINI_API_KEY}
+  model-name: gemini-2.0-flash
+
+jwt:
+  secret: ${JWT_SECRET}
+
+spring:
+  application:
+    name: storyTracks
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 200MB
+
+  datasource:
+    # EC2 Docker network uses "db" hostname from docker-compose
+    url: jdbc:postgresql://db:5432/storytracks
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # keep until schema stabilizes
+    show-sql: false     # turn off SQL logs in production
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    clean-disabled: true     # production safety
+
+  cors:
+    # Vercel frontend domain
+    allowed-origins: "https://story-tracks.vercel.app"
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
+
+cache:
+  type: redis
