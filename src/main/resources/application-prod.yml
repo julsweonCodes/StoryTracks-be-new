@@ -46,10 +46,9 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    clean-disabled: true     # production safety
+    clean-disabled: true
 
   cors:
-    # Vercel frontend domain
     allowed-origins: "*"
 
   data:
