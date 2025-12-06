@@ -13,15 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Debug key size
+      - name: Show repo structure
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" | base64 | wc -c
-          
-      # DEBUG: Show repo files
-      - name: Debug - List Repo Files
-        run: ls -R .
+          echo "=== REPO STRUCTURE ==="
+          pwd
+          ls -R .
 
-      # Copy backend source code to EC2
       - name: Copy backend code to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -29,11 +26,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-          source: "./**"
+          source: "StoryTracks-be-new/**"     # ← UPDATED
           target: "/home/ec2-user/app/storytrack-backend"
-          strip_components: 2
+          strip_components: 1                 # ← IMPORTANT
 
-      # SSH to EC2 & deploy with docker-compose (dash version)
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -42,28 +38,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
           script: |
-            echo "===== DEBUG: LISTING /deploy DIRECTORY ====="
-            ls -al /home/ec2-user/deploy
-
-            echo "===== DEBUG: CHECK docker-compose VERSION ====="
-            docker-compose version || echo "docker-compose NOT FOUND"
-
-            echo "===== DEBUG: CHECKING .env.prod ====="
-            cat /home/ec2-user/deploy/.env.prod || echo ".env.prod MISSING!!"
-
-            echo "===== STOPPING PREVIOUS CONTAINERS ====="
-            docker-compose -f /home/ec2-user/deploy/docker-compose.prod.yml down || true
-
-            echo "===== BUILDING NEW DOCKER IMAGES ====="
-            docker-compose \
-              --env-file /home/ec2-user/deploy/.env.prod \
-              -f /home/ec2-user/deploy/docker-compose.prod.yml \
-              build --no-cache
-
-            echo "===== STARTING SERVICES ====="
-            docker-compose \
-              --env-file /home/ec2-user/deploy/.env.prod \
-              -f /home/ec2-user/deploy/docker-compose.prod.yml \
-              up -d
-
-            echo "===== DEPLOY DONE ====="
+            cd /home/ec2-user/deploy
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml build --no-cache
+            docker-compose -f docker-compose.prod.yml up -d
