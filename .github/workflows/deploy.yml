@@ -26,9 +26,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-          source: "StoryTracks-be-new/**"     # ← UPDATED
+          source: "./**"                 # 💥 FIXED
           target: "/home/ec2-user/app/storytrack-backend"
-          strip_components: 1                 # ← IMPORTANT
+          strip_components: 0
 
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v0.1.7
