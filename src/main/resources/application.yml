@@ -45,6 +45,11 @@ spring:
 
   cors:
     allowed-origins: "http://localhost:3000"
+    allowed-methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    allowed-headers: "*"
+    exposed-headers: "Authorization"
+    allow-credentials: true
+    max-age: 3600
 
   data:
     redis:
