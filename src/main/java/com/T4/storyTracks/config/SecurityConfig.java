@@ -33,19 +33,14 @@ public class SecurityConfig {
                 "https://story-tracks.vercel.app"
         ));
 
-        // Set allowed methods
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
-        // Set allowed headers
         config.setAllowedHeaders(List.of("*"));
 
-        // Allow credentials (cookies, authorization headers)
         config.setAllowCredentials(true);
 
-        // Cache preflight response for 1 hour
         config.setMaxAge(3600L);
 
-        // Register configuration for all paths
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
