@@ -18,6 +18,15 @@ google:
 jwt:
   secret: ${JWT_SECRET}
 
+cors:
+  allowed:
+    origins: "http://localhost:3000,https://story-tracks.vercel.app"
+  methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  headers: "*"
+  exposed-headers: "Authorization"
+  allow-credentials: true
+  max-age: 3600
+
 spring:
   application:
     name: storyTracks
@@ -47,15 +56,6 @@ spring:
     enabled: true
     baseline-on-migrate: true
     clean-disabled: true
-
-  cors:
-    allowed:
-      origins: "https://story-tracks.vercel.app"
-    methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-    headers: "*"
-    exposed-headers: "Authorization"
-    allow-credentials: true
-    max-age: 3600
 
   data:
     redis:
