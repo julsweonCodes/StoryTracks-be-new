@@ -1,0 +1,16 @@
+name: Debug SSH Key
+
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show first 5 lines
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | head -n 5
+          echo "--- END HEAD ---"
+      
+      - name: Count lines
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | wc -l
