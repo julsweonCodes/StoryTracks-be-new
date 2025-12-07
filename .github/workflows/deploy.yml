@@ -26,19 +26,23 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-          source: "./**"
+          source: "."
           target: "/home/ec2-user/app/storytrack-backend"
-          strip_components: 1                 # ← IMPORTANT
+          strip_components: 0
+          overwrite: true
+          rm: true
 
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.EC2_HOST }}s
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
           script: |
-                cd /home/ec2-user/deploy
-                docker-compose --env-file .env.prod -f docker-compose.prod.yml down
-                docker-compose --env-file .env.prod -f docker-compose.prod.yml build --no-cache
-                docker-compose --env-file .env.prod -f docker-compose.prod.yml up -d
+            cd /home/ec2-user/deploy
+            docker-compose --env-file .env.prod -f docker-compose.prod.yml down
+            docker system prune -f
+            docker-compose --env-file .env.prod -f docker-compose.prod.yml build --no-cache --pull
+            docker-compose --env-file .env.prod -f docker-compose.prod.yml up -d
+            echo "Deployment completed successfully"
