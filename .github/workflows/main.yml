@@ -1,0 +1,13 @@
+name: Debug SSH Key
+
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Key Loadability
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          ssh-keygen -lf key.pem

@@ -15,12 +15,9 @@ jobs:
 
       - name: Show repo structure
         run: |
-          echo "=== PRINT WORKSPACE PATH ==="
+          echo "=== REPO STRUCTURE ==="
           pwd
-          echo "=== LIST FILES ==="
-          ls -al .
-          echo "=== RECURSIVE LIST ==="
-          find . -maxdepth 4 -type f | sort
+          ls -R .
 
       - name: Copy backend code to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -29,9 +26,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-          source: "./**"                 # 💥 FIXED
+          source: "StoryTracks-be-new/**"     # ← UPDATED
           target: "/home/ec2-user/app/storytrack-backend"
-          strip_components: 0
+          strip_components: 1                 # ← IMPORTANT
 
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v0.1.7
@@ -41,7 +38,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
           script: |
-            cd /home/ec2-user/deploy
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml build --no-cache
-            docker-compose -f docker-compose.prod.yml up -d
+                cd /home/ec2-user/deploy
+                docker-compose --env-file .env.prod -f docker-compose.prod.yml down
+                docker-compose --env-file .env.prod -f docker-compose.prod.yml build --no-cache
+                docker-compose --env-file .env.prod -f docker-compose.prod.yml up -d
