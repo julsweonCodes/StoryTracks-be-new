@@ -128,44 +128,6 @@ public class UserService {
 
     }
 
-    public UserBlogHomeResponse getUserBlogHome(Long id, int page, int size) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "rgstDtm"));
-        Page<PostResponse> posts = postRepository.findByUserId(id, pageable)
-                .map(post -> PostMapper.convertToDto(post, user));
-
-        return UserBlogHomeResponse.builder()
-                .id(user.getId())
-                .nickname(user.getNickname())
-                .blogName(user.getBlogName())
-                .bio(user.getBio())
-                .profileImg(user.getProfileImg())
-                .lastLoginDtm(
-                        user.getLastLoginDtm() != null ? user.getLastLoginDtm().toString() : null)
-                .posts(posts.getContent())
-                .totalPages(posts.getTotalPages())
-                .currentPage(page)
-                .build();
-    }
-
-    public MyBlogResponse getMyBlogPosts(Long userId, int page, int size) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("User not found with id: " + userId));
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "rgstDtm"));
-        Page<PostResponse> posts = postRepository.findByUserId(userId, pageable)
-                .map(post -> PostMapper.convertToDto(post, user));
-
-        return MyBlogResponse.builder()
-                .totalPages(posts.getTotalPages())
-                .currentPage(page)
-                .posts(posts.getContent())
-                .build();
-    }
-
     // mapper
     private UserResponse toResponse(User user) {
         return UserResponse.builder()

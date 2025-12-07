@@ -173,7 +173,6 @@ public class PostService {
 
             imageRepository.save(postImage);
         }
-
         return savedPost.getPostId();
     }
 

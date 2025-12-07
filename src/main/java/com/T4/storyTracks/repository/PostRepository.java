@@ -53,4 +53,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             Pageable pageable
     );
 
+    @Query(value = """
+    SELECT p.*
+    FROM posts p
+    JOIN images i ON p.post_id = i.post_id
+    WHERE p.user_id = :blogOwnerId
+      AND ROUND(i.geo_lat::NUMERIC, :precision) = ROUND(CAST(:lat AS NUMERIC), :precision)
+      AND ROUND(i.geo_long::NUMERIC, :precision) = ROUND(CAST(:lng AS NUMERIC), :precision)
+    ORDER BY p.rgst_dtm DESC
+""", nativeQuery = true)
+    List<Post> findPostsByMarkerClusterNoPage(
+            @Param("blogOwnerId") Long blogOwnerId,
+            @Param("lat") double lat,
+            @Param("lng") double lng,
+            @Param("precision") int precision
+    );
+
 }
