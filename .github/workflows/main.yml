@@ -6,11 +6,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Show first 5 lines
+      - name: Test Key Loadability
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" | head -n 5
-          echo "--- END HEAD ---"
-      
-      - name: Count lines
-        run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" | wc -l
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          ssh-keygen -lf key.pem
