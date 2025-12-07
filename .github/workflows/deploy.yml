@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
           script: |
-            cd /home/ec2-user/deploy
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml build --no-cache
-            docker-compose -f docker-compose.prod.yml up -d
+                cd /home/ec2-user/deploy
+                docker-compose --env-file .env.prod -f docker-compose.prod.yml down
+                docker-compose --env-file .env.prod -f docker-compose.prod.yml build --no-cache
+                docker-compose --env-file .env.prod -f docker-compose.prod.yml up -d
