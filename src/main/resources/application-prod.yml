@@ -49,9 +49,10 @@ spring:
     clean-disabled: true
 
   cors:
-    allowed-origins: "https://story-tracks.vercel.app"
-    allowed-methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-    allowed-headers: "*"
+    allowed:
+      origins: "https://story-tracks.vercel.app"
+    methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    headers: "*"
     exposed-headers: "Authorization"
     allow-credentials: true
     max-age: 3600

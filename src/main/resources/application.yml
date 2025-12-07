@@ -44,9 +44,10 @@ spring:
     clean-disabled: false  # allow dropping tables for reset
 
   cors:
-    allowed-origins: "http://localhost:3000"
-    allowed-methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-    allowed-headers: "*"
+    allowed:
+      origins: "http://localhost:3000"
+    methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    headers: "*"
     exposed-headers: "Authorization"
     allow-credentials: true
     max-age: 3600
