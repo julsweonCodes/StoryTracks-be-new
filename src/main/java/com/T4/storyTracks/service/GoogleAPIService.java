@@ -147,6 +147,7 @@ public class GoogleAPIService {
     @CacheEvict(value = "userImageClusters", key = "#userId")
     public void clearUserCache(Long userId) {
         // Evict cache when user uploads new image
+        System.out.println("Cache cleared!! 🔪🔪🔪🔪");
     }
 
 
