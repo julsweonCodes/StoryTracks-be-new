@@ -223,7 +223,7 @@ public class PostService {
             liked = likeRepository.existsByPostIdAndUserId(postId, userId);;
         }
         res.setIsLiked(liked);
-
+        cacheService.clearUserCache(userId);
         return res;
     }
 
