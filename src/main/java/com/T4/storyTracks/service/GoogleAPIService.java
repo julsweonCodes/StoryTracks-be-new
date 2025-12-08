@@ -127,28 +127,4 @@ public class GoogleAPIService {
                 })
                 .collect(Collectors.toList());
     }
-
-        /*
-        return results.stream()
-                .map(row -> ImageClusterResponse.builder()
-                        .clusterLat(row.get("cluster_lat") == null ? 0.0 :
-                                ((Number) row.get("cluster_lat")).doubleValue())
-                        .clusterLong(row.get("cluster_long") == null ? 0.0 :
-                                ((Number) row.get("cluster_long")).doubleValue())
-                        .imageCount(row.get("image_count") == null ? 0 :
-                                ((Number) row.get("image_count")).intValue())
-                        .thumbImgPath((String) row.get("thumb_img_path"))
-                        .clusterLevel(row.get("cluster_level") == null ? 1 :
-                                ((Number) row.get("cluster_level")).intValue())
-                        .build())
-                .toList();
-*/
-
-    @CacheEvict(value = "userImageClusters", key = "#userId")
-    public void clearUserCache(Long userId) {
-        // Evict cache when user uploads new image
-        System.out.println("Cache cleared!! 🔪🔪🔪🔪");
-    }
-
-
 }
