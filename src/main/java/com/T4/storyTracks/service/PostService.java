@@ -35,6 +35,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final FollowerRepository followerRepository;
+    private final GoogleAPIService googleAPIService;
 
     // ==========================================================
     // 1. GET ALL POSTS (FEED) – with isLiked
@@ -173,6 +174,8 @@ public class PostService {
 
             imageRepository.save(postImage);
         }
+
+        googleAPIService.clearUserCache(userId);
         return savedPost.getPostId();
     }
 
