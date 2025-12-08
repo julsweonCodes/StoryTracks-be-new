@@ -15,7 +15,7 @@ public interface ImageRepository extends JpaRepository<PostImage, Long> {
                 ROUND(i.geo_long::NUMERIC, 2) AS cluster_long,
                 COUNT(*) AS image_count,
                 MIN(i.img_path) AS thumb_img_path,
-                3 AS cluster_level
+                CAST(3 AS INTEGER) AS cluster_level
             FROM images i
             JOIN posts p ON i.post_id = p.post_id
             WHERE p.user_id = :userId AND i.thumb_yn = 'Y'
