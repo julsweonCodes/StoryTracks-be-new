@@ -39,6 +39,8 @@ tmp/
 *.pid
 .env
 docker-compose.override.yml
+Dockerfile
+docker-compose.yml
 
 ### Flyway ###
 /sql/migrations/test/
