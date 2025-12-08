@@ -35,7 +35,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final FollowerRepository followerRepository;
-    private final GoogleAPIService googleAPIService;
+    private final GoogleAPIService googleAPIService; // for clearcache
 
     // ==========================================================
     // 1. GET ALL POSTS (FEED) – with isLiked
