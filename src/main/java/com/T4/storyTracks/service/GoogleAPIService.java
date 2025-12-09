@@ -114,6 +114,8 @@ public class GoogleAPIService {
     @Cacheable(value = "userImageClusters", key = "#userId", unless = "#result.isEmpty()")
     public List<Map<String, Object>> getUserClusters(Long userId) {
         List<Map<String, Object>> results = imageRepository.findUserImageClusters(userId);
+        log.info("⭐️️️️ ******** log ********");
+        results.forEach(m -> log.info(m.toString()));
 
         return results.stream()
                 .map(row -> {
