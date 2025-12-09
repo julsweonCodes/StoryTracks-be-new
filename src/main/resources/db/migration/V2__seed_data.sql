@@ -10,7 +10,7 @@ BEGIN
 -- USER 1
 -- ================================
 INSERT INTO users (user_id, pwd, email, birth_ymd, nickname, blog_name, bio)
-VALUES ('user123', 'password123', 'user123@example.com', '19951012',
+VALUES ('user123', '$2a$10$6VgbR0pdXJ/Xl/IQH4O8JecZWB2/q2cFPiGkNMzvlVahKNGl/s74K', 'user123@example.com', '19951012',
         'TravelerTom', 'cutecute blog cute',
         'Loves exploring new cities and sharing photos')
 ON CONFLICT (user_id) DO NOTHING;
