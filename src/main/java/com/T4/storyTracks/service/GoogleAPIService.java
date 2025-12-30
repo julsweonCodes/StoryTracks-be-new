@@ -36,7 +36,7 @@ public class GoogleAPIService {
     /**
      * 🔁 Runs every 12 hours to recompute image clusters for Google Maps.
      */
-    @Scheduled(cron = "0 0 */1 * * *")
+    @Scheduled(cron = "0 0 1 1 *")
     public void computeImageClusters() {
         log.info("🛰️ Starting image cluster recomputation...");
 
