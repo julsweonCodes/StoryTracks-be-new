@@ -4,6 +4,8 @@ import com.T4.storyTracks.common.ApiResponse;
 import com.T4.storyTracks.dto.request.PostCreateRequest;
 import com.T4.storyTracks.dto.response.PostDetailResponse;
 import com.T4.storyTracks.dto.response.PostResponse;
+import com.T4.storyTracks.idempotency.Idempotent;
+import com.T4.storyTracks.idempotency.IdempotencyEndpoint;
 import com.T4.storyTracks.service.JWTService;
 import com.T4.storyTracks.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +27,7 @@ public class PostController {
     @GetMapping("/feed")
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getAllPosts(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @RequestParam(defaultValue = "0") int page
-    ) {
+            @RequestParam(defaultValue = "0") int page) {
         Long viewerId = jwtService.extractUserIdOrNull(authHeader);
         Page<PostResponse> posts = postService.getAllPosts(page, viewerId);
 
@@ -42,8 +43,7 @@ public class PostController {
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam int level,
-            @RequestParam(defaultValue = "0") int page
-    ) {
+            @RequestParam(defaultValue = "0") int page) {
         Long viewerId = jwtService.extractUserIdOrNull(authHeader);
 
         Page<PostResponse> posts = postService.getPostsByMarker(lat, lng, level, page, viewerId);
@@ -57,8 +57,7 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostDetailResponse>> getPostDetail(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable Long postId
-    ) {
+            @PathVariable Long postId) {
         Long viewerId = jwtService.extractUserIdOrNull(authHeader);
 
         PostDetailResponse detail = postService.getPostById(postId, viewerId);
@@ -70,10 +69,10 @@ public class PostController {
     // 4. CREATE POST
     // ==========================================================
     @PostMapping("/create")
+    @Idempotent(endpoint = IdempotencyEndpoint.POSTS_CREATE, pathTemplate = "/api/v1/posts/create")
     public ResponseEntity<ApiResponse<Long>> createPost(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @RequestBody PostCreateRequest req
-    ) {
+            @RequestBody PostCreateRequest req) {
         Long userId = jwtService.requireUserId(authHeader);
 
         Long postId = postService.createPost(userId, req);
@@ -87,8 +86,7 @@ public class PostController {
     public ResponseEntity<ApiResponse<PostDetailResponse>> updatePost(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @PathVariable Long postId,
-            @RequestBody PostCreateRequest req
-    ) {
+            @RequestBody PostCreateRequest req) {
         Long userId = jwtService.requireUserId(authHeader);
 
         PostDetailResponse updated = postService.updatePostById(userId, postId, req);
@@ -102,8 +100,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
-            @PathVariable Long postId
-    ) {
+            @PathVariable Long postId) {
         Long userId = jwtService.requireUserId(authHeader);
         postService.deletePostById(postId, userId);
 

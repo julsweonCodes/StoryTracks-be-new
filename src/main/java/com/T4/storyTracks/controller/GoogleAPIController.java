@@ -18,11 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/google")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class GoogleAPIController {
 
     private final GoogleAPIService googleAPIService;
-
 
     @GetMapping("/clusters")
     public ResponseEntity<ApiResponse<List<ImageClusterResponse>>> getImageClusters() {
@@ -32,7 +31,7 @@ public class GoogleAPIController {
 
     @GetMapping("/clusters/recompute")
     public ResponseEntity<ApiResponse<List<ImageClusterResponse>>> recomputeClusters() {
-        googleAPIService.computeImageClusters();
+        googleAPIService.computeImageClustersIncremental();
         List<ImageClusterResponse> clusters = googleAPIService.getAllClusters();
         return ResponseEntity.ok(ApiResponse.success("Cluster recomputation triggered manually", clusters));
     }
@@ -45,7 +44,6 @@ public class GoogleAPIController {
 
         return ResponseEntity.ok(ApiResponse.success(
                 "Fetched user image markers successfully",
-                clusters
-        ));
+                clusters));
     }
 }

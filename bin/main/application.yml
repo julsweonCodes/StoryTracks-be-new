@@ -1,0 +1,65 @@
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+s3:
+  base-url: https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/
+
+google:
+  api-key: ${GEMINI_API_KEY}
+  model-name: gemini-2.0-flash
+
+jwt:
+  secret: ${JWT_SECRET}
+
+spring:
+  application:
+    name: storyTracks
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 200MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/storytracks
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    #spring.flyway.enabled: false # auto-migration temporarily off
+    clean-disabled: false  # allow dropping tables for reset
+
+  cors:
+    allowed:
+      origins: "http://localhost:3000"
+    methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    headers: "*"
+    exposed-headers: "Authorization"
+    allow-credentials: true
+    max-age: 3600
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
+
+cache:
+  type: redis

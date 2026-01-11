@@ -1,6 +1,8 @@
 package com.T4.storyTracks.controller;
 
 import com.T4.storyTracks.common.ApiResponse;
+import com.T4.storyTracks.idempotency.Idempotent;
+import com.T4.storyTracks.idempotency.IdempotencyEndpoint;
 import com.T4.storyTracks.service.JWTService;
 import com.T4.storyTracks.service.LikeService;
 import com.sun.security.auth.UserPrincipal;
@@ -23,6 +25,7 @@ public class LikeController {
     private final JWTService jwtService;
 
     @PostMapping("/{postId}/like")
+    @Idempotent(endpoint = IdempotencyEndpoint.POSTS_LIKE, pathTemplate = "/api/v1/posts/{postId}/like")
     public ResponseEntity<ApiResponse<Void>> likePost(
             @PathVariable Long postId,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -34,13 +37,11 @@ public class LikeController {
     @DeleteMapping("/{postId}/like")
     public ResponseEntity<ApiResponse<Void>> unlikePost(
             @PathVariable Long postId,
-            @RequestHeader(value = "Authorization", required = false) String authHeader
-    ) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         Long userId = jwtService.requireUserId(authHeader);
         likeService.unlikePost(postId, userId);
 
         return ResponseEntity.ok(ApiResponse.success("Post unliked", null));
     }
-
 
 }
