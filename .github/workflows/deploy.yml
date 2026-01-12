@@ -26,9 +26,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
 
-          source: "build.gradle,settings.gradle,gradlew,gradlew.bat,gradle/**,src/**,Dockerfile"
+          source: "build.gradle,settings.gradle,gradlew,gradlew.bat,gradle/wrapper/**,src/**,Dockerfile"
           target: "/home/ec2-user/app/storytrack-backend"
           rm: true
+
+          timeout: 300s
+          command_timeout: 20m
 
       - name: SSH into EC2 and deploy docker
         uses: appleboy/ssh-action@v0.1.7
