@@ -13,22 +13,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # (기존 유지)
       - name: Show repo structure
         run: |
           echo "=== REPO STRUCTURE ==="
           ls -R .
 
-      - name: Copy backend code to EC2
+      - name: Build JAR (bootJar)
+        run: ./gradlew clean bootJar
+
+      - name: Prepare deploy files
+        run: |
+          mkdir -p deploy_tmp
+          cp build/libs/*.jar deploy_tmp/app.jar
+          cp Dockerfile deploy_tmp/Dockerfile
+
+      - name: Copy JAR + Dockerfile to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-
-          source: "build.gradle,settings.gradle,gradlew,gradlew.bat,gradle/**,src/**,Dockerfile"
+          source: "deploy_tmp/app.jar,deploy_tmp/Dockerfile"
           target: "/home/ec2-user/app/storytrack-backend"
           rm: true
+          timeout: 300s
+          command_timeout: 20m
 
       - name: SSH into EC2 and deploy docker
         uses: appleboy/ssh-action@v0.1.7
