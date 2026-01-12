@@ -3,6 +3,8 @@ package com.T4.storyTracks.controller;
 import com.T4.storyTracks.common.ApiResponse;
 import com.T4.storyTracks.dto.request.AIGenerateRequest;
 import com.T4.storyTracks.dto.response.AiGenerateResponse;
+import com.T4.storyTracks.idempotency.Idempotent;
+import com.T4.storyTracks.idempotency.IdempotencyEndpoint;
 import com.T4.storyTracks.service.GeminiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,9 @@ public class AiController {
     private final GeminiService geminiService;
 
     @PostMapping("/generate")
+    @Idempotent(endpoint = IdempotencyEndpoint.AI_GENERATE, pathTemplate = "/api/v1/ai/generate", requireAuth = false)
     public ResponseEntity<ApiResponse<AiGenerateResponse>> generateAI(
-            @RequestBody AIGenerateRequest req
-    ) {
+            @RequestBody AIGenerateRequest req) {
         AiGenerateResponse response = geminiService.generate(req);
         return ResponseEntity.ok(ApiResponse.success("AI blog text generated", response));
     }

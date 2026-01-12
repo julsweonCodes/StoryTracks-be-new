@@ -1,6 +1,8 @@
 package com.T4.storyTracks.controller;
 
 import com.T4.storyTracks.common.ApiResponse;
+import com.T4.storyTracks.idempotency.Idempotent;
+import com.T4.storyTracks.idempotency.IdempotencyEndpoint;
 import com.T4.storyTracks.service.JWTService;
 import com.T4.storyTracks.service.S3Service;
 import java.util.List;
@@ -26,6 +28,7 @@ public class S3Controller {
      * POST /api/s3/upload/profile
      */
     @PostMapping("/upload/profile")
+    @Idempotent(endpoint = IdempotencyEndpoint.S3_UPLOAD_PROFILE, pathTemplate = "/api/v1/s3/upload/profile")
     public ResponseEntity<ApiResponse<String>> uploadProfile(
             @RequestParam("file") MultipartFile file,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -43,6 +46,7 @@ public class S3Controller {
      * ✅ Multi upload — for post images (up to 10)
      */
     @PostMapping("/upload/blog-images")
+    @Idempotent(endpoint = IdempotencyEndpoint.S3_UPLOAD_BLOG_IMAGES, pathTemplate = "/api/v1/s3/upload/blog-images")
     public ResponseEntity<ApiResponse<List<String>>> uploadPostImages(
             @RequestParam("files") List<MultipartFile> files,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {

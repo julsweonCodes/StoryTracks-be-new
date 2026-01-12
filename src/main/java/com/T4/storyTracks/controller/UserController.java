@@ -12,6 +12,8 @@ import com.T4.storyTracks.dto.response.LoginResponse;
 import com.T4.storyTracks.dto.response.MyBlogResponse;
 import com.T4.storyTracks.dto.response.UserBlogHomeResponse;
 import com.T4.storyTracks.dto.response.UserResponse;
+import com.T4.storyTracks.idempotency.Idempotent;
+import com.T4.storyTracks.idempotency.IdempotencyEndpoint;
 import com.T4.storyTracks.model.User;
 import com.T4.storyTracks.service.JWTService;
 import com.T4.storyTracks.service.PostService;
@@ -37,13 +39,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
     private final JWTService jwtService;
 
     @PostMapping("/register")
+    @Idempotent(endpoint = IdempotencyEndpoint.USERS_REGISTER, pathTemplate = "/api/v1/users/register", requireAuth = false)
     public ResponseEntity<ApiResponse<UserResponse>> registerUser(@RequestBody UserRegisterRequest request) {
         UserResponse newUser = userService.registerUser(request);
         return ResponseEntity.ok(ApiResponse.success("User registered successfully", newUser));
@@ -66,8 +69,7 @@ public class UserController {
 
     @GetMapping("/{id}/profile")
     public ResponseEntity<ApiResponse<UserResponse>> getUserProfile(
-            @RequestHeader(value = "Authorization", required = false) String authHeader
-    ) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         UserResponse user = userService.getUserProfile(jwtService.requireUserId(authHeader));
         return ResponseEntity.ok(ApiResponse.success("Fetched user profile successfully", user));
     }
@@ -81,11 +83,10 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<ApiResponse<Void>> updateUserPassword(@PathVariable Long id, @RequestBody
-    UserPwdUpdateRequest request) {
+    public ResponseEntity<ApiResponse<Void>> updateUserPassword(@PathVariable Long id,
+            @RequestBody UserPwdUpdateRequest request) {
         userService.updateUserPwd(id, request);
         return ResponseEntity.ok(ApiResponse.success("Updated user password successfully", null));
     }
-
 
 }

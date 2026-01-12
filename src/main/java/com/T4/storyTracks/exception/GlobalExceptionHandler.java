@@ -1,6 +1,7 @@
 package com.T4.storyTracks.exception;
 
 import com.T4.storyTracks.common.ApiResponse;
+import com.T4.storyTracks.idempotency.IdempotencyException;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,14 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("401", ex.getMessage()));
     }
 
+    // 🔹 Idempotency exceptions (Redis unavailable - fail-closed)
+    @ExceptionHandler(IdempotencyException.class)
+    public ResponseEntity<ApiResponse<?>> handleIdempotencyError(IdempotencyException ex) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ApiResponse.error("503", "Service temporarily unavailable. Please retry later."));
+    }
+
     // 🔹 Catch-all for unhandled exceptions (shows message for debug)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleGeneric(Exception ex) {
@@ -41,6 +50,5 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("500", "Internal Server Error: " + ex.getMessage()));
     }
-
 
 }
