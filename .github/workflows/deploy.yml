@@ -33,7 +33,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
 
-          source: "build.gradle,settings.gradle,gradlew,gradlew.bat,gradle/wrapper/**,src/**,Dockerfile"
+          source: "build.gradle,settings.gradle,gradlew,gradlew.bat,gradle/**,src/**,Dockerfile"
           target: "/home/ec2-user/app/storytrack-backend"
 
           # Keep files for caching benefits (don't delete old files)
